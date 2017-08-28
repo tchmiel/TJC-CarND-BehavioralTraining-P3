@@ -16,7 +16,8 @@ for line in lines:
 		current_path = './data/P3Data_1/IMG/' + filename
 		center_image = cv2.imread(current_path)
 		center_images.append(center_image)
-		print (center_image.input_shape)
+		height, width, channels = center_image.shape
+		print height, width, channels
 		measurement = float(line[3])
 		measurements.append(measurement)
 
