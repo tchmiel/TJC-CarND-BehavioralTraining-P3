@@ -17,7 +17,7 @@ for line in lines:
 		center_image = cv2.imread(current_path)
 		center_images.append(center_image)
 		height, width, channels = center_image.shape
-		print height, width, channels
+		print (height, width, channels)
 		measurement = float(line[3])
 		measurements.append(measurement)
 
