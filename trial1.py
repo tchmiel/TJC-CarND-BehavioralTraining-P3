@@ -12,7 +12,7 @@ center_images=[]
 measurements = []
 for line in lines:
 		source_path = line[0]
-		filename = source_path.split('/')[-1]
+		filename = source_path.split('\\')[-1]
 		current_path = './data/P3Data_1/IMG/' + filename
 		print (current_path)
 		center_image = cv2.imread(current_path)
