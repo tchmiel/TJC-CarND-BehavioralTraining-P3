@@ -13,7 +13,6 @@ remove_zero_percentage = 0.95
 def relative_image_path (root_data_dir, image_path):
     # converts driving_log.csv image path to be relative image path
     image_path = image_path.strip()
-    #print(image_path)
     if image_path.startswith('IMG'):
         # from Udacity driving_csv.log
         relative_path = root_data_dir + image_path
@@ -107,7 +106,6 @@ def grayscale(img):
 from sklearn.model_selection import train_test_split
 train_samples, validation_samples = train_test_split(samples, test_size = TEST_SIZE)
 
-
 import cv2
 import numpy as np
 import sklearn
@@ -147,11 +145,18 @@ def generator(samples, batch_size = BATCH_SIZE):
                 angles.append(steering_left_angle)
 
                 right_image = cv2.imread(name)
-                right_imagee = colorCorrect_image(right_image)
+                right_image = colorCorrect_image(right_image)
                 steering_right_angle = center_angle - steering_correction_factor
                 images.append(right_image)
                 angles.append(steering_right_angle)
 
+                right_image = cv2.imread(name)
+                right_image = colorCorrect_image(right_image)
+                steering_right_angle = center_angle - steering_correction_factor
+                
+                flipped_image, flipped_angle = flip_image (center_image, center_angle)
+                images.append(flipped_image)
+                angles.append(flipped_angle)
 
             # trim image to only see section with road
             X_train = np.array(images)
@@ -161,7 +166,6 @@ def generator(samples, batch_size = BATCH_SIZE):
 # compile and train the model using the generator function
 train_generator = generator(train_samples, batch_size = BATCH_SIZE)
 validation_generator = generator(validation_samples, batch_size = BATCH_SIZE)
-
 
 
 from keras.models import Sequential
@@ -205,8 +209,11 @@ model.add(Convolution2D(64,3,3, activation = 'relu'))
 model.add(Convolution2D(64,3,3, activation = 'relu'))
 model.add(Flatten())
 model.add(Dense(100))
+model.add(Dropout(0.5))
 model.add(Dense(50))
+model.add(Dropout(0.5))
 model.add(Dense(10))
+model.add(Dropout(0.5))
 model.add(Dense(1))
 
 
@@ -216,7 +223,7 @@ model.summary()
 
 model.compile(loss = 'mse', optimizer = 'adam')
 history_object = model.fit_generator(train_generator, 
-            samples_per_epoch = len(train_samples), 
+            samples_per_epoch = len(train_samples)*4, 
             validation_data = validation_generator, 
             nb_val_samples = len(validation_samples), 
             nb_epoch = NUM_EPOCHS, verbose  = 2)
